@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        label {
+            display: block;
+            font: .9rem 'Fira Sans', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<form>
+    <div class="formBox">
+        <label for="firstName">firstName</label>
+        <input type="text" id="firstName" />
+    </div>
+    <div class="formBox">
+        <label for="lastName">lastName</label>
+        <input type="text" id="lastName" />
+    </div>
+    <div class="formBox">
+        <label for="email">email</label>
+        <input type="text" id="email" />
+    </div>
+    <div class="formBox">
+        <label for="password" >password</label>
+        <input type="password"  id="password" minlength="6" required/>
+    </div>
+    <div class="formBox">
+        <button id="btn">Registration</button>
+    </div>
+    <div id="msg">
+        <pre></pre>
+    </div>
+</form>
+
+</body>
+<script>
+    function registration() {
+        let user = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        fetch('http://localhost:8080/api/users', {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+
+            .then(res => {
+                if (res.ok) {
+                    console.log("HTTP request successful")
+                } else {
+                    console.log(res.status)
+                }
+                return res
+            })
+
+            .then(res => res.json())
+            .then(data => console.log(data))
+            .catch(error => console.log(error))
+
+    }
+    document.addEventListener('DOMContentLoaded', ()=>{
+        document.getElementById('btn').addEventListener('click', registration);
+    });
+
+</script>
+</html>

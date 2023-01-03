@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://35.184.71.95:5432/english?useUnicode=true&characterEncoding=UTF-8&assumeMinServerVersion=9.6
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+schedule:
+  lesson-generator: "0/30 * *  * * ?"

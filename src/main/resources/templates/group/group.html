@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script>
+        function getUser() {
+            var userId = 2;//temp, do it after security
+            var userhttp = new XMLHttpRequest();
+            userhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var user = JSON.parse(this.responseText);
+                    var firstName = user.firstName;
+                    var lastName = user.lastName;
+                    var englishGroupId = user.englishGroup.id;
+                    var fullName = firstName + " " + lastName;
+                    document.getElementById("fullname").innerHTML = fullName;
+                    findGroup(englishGroupId);
+                }
+            };
+            userhttp.open("GET", "http://localhost:8080/api/users/" + userId, true);
+            userhttp.send();
+        }
+
+        function findGroup(engGroupId) {
+            var groupId = engGroupId;
+            var grouphttp = new XMLHttpRequest();
+            grouphttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var group = JSON.parse(this.responseText);
+                    var name = group.name;
+                    var englishLevel = group.englishLevel;
+                    var mentorFirstName = group.mentor.firstName;
+                    var mentorLastName = group.mentor.lastName;
+                    var fullMentorName = mentorFirstName + " " + mentorLastName;
+                    document.getElementById("groupname").innerHTML = name;
+                    document.getElementById("englishLevel").innerHTML = englishLevel;
+                    document.getElementById("mentor").innerHTML = fullMentorName;
+                    loadStudentList(groupId);
+                }
+            };
+            grouphttp.open("GET", "http://localhost:8080/group/" + groupId, true);
+            grouphttp.send();
+        }
+
+        function loadStudentList(engGroupId) {
+            var englishGroupId = engGroupId;
+            var studentListhttp = new XMLHttpRequest();
+            studentListhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var students = JSON.parse(this.responseText);
+
+                    let studentTable = document.querySelector('#studentTable');
+                    for (let i = 0; i < students.content.length; i++) {
+                        let tr = document.createElement('tr');
+                        let td1 = document.createElement('td');
+                        let td2 = document.createElement('td');
+                        let td3 = document.createElement('td');
+                        var td1content = students.content[i].firstName;
+                        var td2content = students.content[i].lastName;
+                        var td3content = students.content[i].email;
+                        td1.innerHTML = td1content;
+                        td2.innerHTML = td2content;
+                        td3.innerHTML = td3content;
+                        tr.appendChild(td1);
+                        tr.appendChild(td2);
+                        tr.appendChild(td3);
+                        studentTable.appendChild(tr);
+                    }
+                }
+            };
+            studentListhttp.open("GET", "http://localhost:8080/api/users/group/" + englishGroupId, true);
+            studentListhttp.send();
+        }
+
+        $(document).ready(function () {
+            getUser();
+        });
+    </script>
+    <style>
+        #studentTable {
+            alignment: center;
+            padding: 10px;
+            border: black;
+            border-style: double;
+            background: rgba(140, 140, 140, 0.99);
+            text-align: center;
+            font-size: 12pt;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="generalInfo">
+    <h3>UserName</h3>
+    <p id="fullname">Full username</p>
+    <h3>GroupName</h3>
+    <p id="groupname">Group name</p>
+    <h3>EnglishLevel</h3>
+    <p id="englishLevel">English level</p>
+    <h3>Mentor</h3>
+    <p id="mentor">Mentor</p>
+</div>
+
+<div id="studentsListDiv">
+    <h3>List of students</h3>
+    <table id="studentTable">
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>email</th>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3> Group's classes </h3>
+</div>
+
+</body>
+</html>

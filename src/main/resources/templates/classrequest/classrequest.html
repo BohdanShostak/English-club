@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Individual class request</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script>
+        function getUser() {
+            var userId = 2;//temp, do it after security
+            var userhttp = new XMLHttpRequest();
+            userhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var user = JSON.parse(this.responseText);
+                    document.getElementById("fullname").innerHTML = fullName;
+                    classRequest(user);
+                }
+            };
+            userhttp.open("GET", "http://localhost:8080/api/users/" + userId, true);
+            userhttp.send();
+        }
+
+        function classRequest1(currentUser) {
+            var user = currentUser;
+
+            $("#form").submit(function () {
+                var classRequestJson = {};
+                classRequestJson["notes"] = $("#classRequestText").val();
+                classRequestJson["user"] = user;
+                $.ajax({
+                    url: "/classrequest",
+                    type: "POST",
+                    data: JSON.stringify(classRequestJson),
+                    dataType: 'json',
+                    async: false,
+                    contentType: 'application/json; charset=utf-8',
+                    complete: window.location.href =("/profile/"+$("#modelAttr").val())
+                });
+            });
+        }
+
+
+
+        $(document).ready( function() {
+            //getUser();
+            //classRequest();
+            /*document.addEventListener('DOMContentLoaded', ()=>{
+                document.getElementById('classRequestBtn').addEventListener('click', sendClassRequest);
+            });*/
+            //sendClassRequest();
+        });
+
+        function sendClassRequest() {
+
+            fetch('http://localhost:8080/classrequest', {
+                method: "POST",
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(classRequest)
+            })
+
+                .then(res => {
+                    if (res.ok) {
+                        console.log("HTTP request successful")
+                    } else {
+                        console.log(res.status)
+                    }
+                    return res
+                })
+
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(error => console.log(error))
+        }
+
+    </script>
+</head>
+
+<body>
+<h3>Trial individual class request</h3>
+<form id = "classRequestForm">
+    <p>Please enter the desired date and time of the trial lesson <br>
+        and share anything that will help prepare for our lesson</p>
+    <div class="formBox">
+        <textarea id="classRequestText" cols="45" rows="5"></textarea>
+    </div>
+    <div class="formBox">
+        <button type="submit" id="classRequestBtn">Send</button>
+    </div>
+</form>
+</body>
+</html>
